@@ -64,6 +64,52 @@ function getRetryDelayMs(response, payload, attempt) {
   return Math.min(15000 * attempt, 60000);
 }
 
+function describeFailure(response, payload, message, rawBody) {
+  if (response.status === 403 && rawBody.includes("Just a moment")) {
+    return "Blocked by Cloudflare managed challenge.";
+  }
+
+  if (response.status === 401) {
+    return "Authentication failed. Check MUYUAN_ACCESS_TOKEN and MUYUAN_USER_ID.";
+  }
+
+  if (
+    typeof message === "string" &&
+    (
+      message.includes("invalid access token") ||
+      message.includes("access token invalid") ||
+      message.includes("Unauthorized")
+    )
+  ) {
+    return "Access token is invalid or expired.";
+  }
+
+  if (
+    typeof message === "string" &&
+    (
+      message.includes("user id") ||
+      message.includes("user mismatch") ||
+      message.includes("not provided")
+    )
+  ) {
+    return "User identity check failed. Verify MUYUAN_USER_ID matches the token owner.";
+  }
+
+  if (
+    typeof payload === "object" &&
+    payload !== null &&
+    payload.cloudflare_error === true
+  ) {
+    return `Cloudflare origin error: ${payload.error_name || "unknown_error"}.`;
+  }
+
+  if (response.status >= 500) {
+    return "Upstream server error from muyuan.do.";
+  }
+
+  return "";
+}
+
 async function postCheckinWithRetry(maxAttempts = 3) {
   for (let attempt = 1; attempt <= maxAttempts; attempt += 1) {
     const response = await fetch(endpoint, {
@@ -122,8 +168,9 @@ if (message) {
 }
 
 if (!response.ok) {
-  if (response.status === 403 && rawBody.includes("Just a moment")) {
-    console.error("Blocked by Cloudflare managed challenge.");
+  const failureReason = describeFailure(response, payload, message, rawBody);
+  if (failureReason) {
+    console.error(failureReason);
   }
   process.exit(1);
 }
@@ -133,6 +180,10 @@ if (appSuccess === false) {
   if (checkedInToday) {
     console.log("Already checked in today.");
     process.exit(0);
+  }
+  const failureReason = describeFailure(response, payload, message, rawBody);
+  if (failureReason) {
+    console.error(failureReason);
   }
   process.exit(1);
 }

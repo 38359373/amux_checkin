@@ -1,0 +1,30 @@
+{
+  "delay_seconds_min": 5,
+  "delay_seconds_max": 12,
+  "accounts": [
+    {
+      "name": "account-1",
+      "enabled": true,
+      "user_id": "16638",
+      "access_token": "REPLACE_WITH_ACCOUNT_1_ACCESS_TOKEN"
+    },
+    {
+      "name": "account-2",
+      "enabled": true,
+      "user_id": "REPLACE_WITH_ACCOUNT_2_USER_ID",
+      "access_token": "REPLACE_WITH_ACCOUNT_2_ACCESS_TOKEN"
+    },
+    {
+      "name": "account-3",
+      "enabled": true,
+      "user_id": "REPLACE_WITH_ACCOUNT_3_USER_ID",
+      "access_token": "REPLACE_WITH_ACCOUNT_3_ACCESS_TOKEN"
+    },
+    {
+      "name": "account-4",
+      "enabled": true,
+      "user_id": "REPLACE_WITH_ACCOUNT_4_USER_ID",
+      "access_token": "REPLACE_WITH_ACCOUNT_4_ACCESS_TOKEN"
+    }
+  ]
+}
