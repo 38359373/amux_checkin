@@ -5,7 +5,8 @@
   "type": "module",
   "scripts": {
     "checkin:amux": "node scripts/amux-checkin.js",
-    "checkin:muyuan": "node scripts/muyuan-checkin.js"
+    "checkin:muyuan": "node scripts/muyuan-checkin.js",
+    "checkin:elysiver": "node scripts/elysiver-checkin.js"
   },
   "engines": {
     "node": ">=20"
